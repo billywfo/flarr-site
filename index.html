@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ✅ SEO (FINAL) -->
+  <title>Flarr — Curadoria e Ativação Social em Tempo Real para o Ao Vivo</title>
+  <meta name="description" content="Capture, modere e exiba tweets ao vivo com estética de broadcast e controle editorial. Curadoria em tempo real para TV, streaming, esportes e eventos — com potencial de ativação e monetização.">
+  <link rel="canonical" href="https://flarr.com.br/">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#050505">
+
+  <!-- ✅ Open Graph / WhatsApp / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Flarr">
+  <meta property="og:title" content="Flarr — Curadoria e Ativação Social em Tempo Real para o Ao Vivo">
+  <meta property="og:description" content="Capture, modere e exiba tweets ao vivo com estética de broadcast e controle editorial. Curadoria em tempo real para TV, streaming, esportes e eventos — com potencial de ativação e monetização.">
+  <meta property="og:url" content="https://flarr.com.br/">
+  <meta property="og:image" content="https://flarr.com.br/img/og-flarr.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- ✅ Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Flarr — Curadoria e Ativação Social em Tempo Real para o Ao Vivo">
+  <meta name="twitter:description" content="Capture, modere e exiba tweets ao vivo com estética de broadcast e controle editorial. Curadoria em tempo real para TV, streaming, esportes e eventos — com potencial de ativação e monetização.">
+  <meta name="twitter:image" content="https://flarr.com.br/img/og-flarr.png">
+
+  <!-- ✅ NÃO use defer aqui -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- flag para CSS saber que JS está ativo -->
+  <script>
+    document.documentElement.classList.add('js');
+  </script>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050505; }
+    .text-flarr-orange { color: #f97316; }
+    .bg-flarr-orange { background-color: #f97316; }
+    .border-flarr-orange { border-color: #f97316; }
+    .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+    .monitor-frame {
+      border: 12px solid #1a1a1e;
+      border-radius: 20px;
+      box-shadow: 0 0 50px rgba(249, 115, 22, 0.15);
+      background: #1a1a1e;
+    }
+
+    .gradient-orange {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+
+    .spotlight {
+      position: absolute;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(5, 5, 5, 0) 70%);
+      z-index: -1;
+    }
+
+    /* ===== ANIMAÇÕES NO SCROLL (SEM AOS) ===== */
+    .js .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 520ms ease, transform 520ms ease;
+      will-change: opacity, transform;
+    }
+    .js .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .js .reveal.fade-left { transform: translateX(18px); }
+    .js .reveal.fade-left.in-view { transform: translateX(0); }
+
+    .js .reveal.fade-right { transform: translateX(-18px); }
+    .js .reveal.fade-right.in-view { transform: translateX(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .js .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* ===== MODAL SIMPLES ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .modal-panel {
+      width: 100%;
+      max-width: 42rem;
+      max-height: 90vh;
+      overflow: auto;
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+      transition: opacity 220ms ease, transform 220ms ease;
+      border-radius: 2.5rem;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(249,115,22,0.12), 0 0 80px rgba(249,115,22,0.12);
+    }
+
+    .modal-overlay.is-open {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-overlay.is-open .modal-panel {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    body.modal-open { overflow: hidden; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .modal-overlay, .modal-panel { transition: none; }
+      .modal-panel { transform: none; opacity: 1; }
+    }
+
+    /* ===== POPUP DE AGRADECIMENTO ===== */
+    .thanks-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 200;
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+    .thanks-overlay.is-open {
+      display: flex;
+      opacity: 1;
+    }
+    .thanks-panel {
+      width: 100%;
+      max-width: 34rem;
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+      transition: opacity 220ms ease, transform 220ms ease;
+      border-radius: 2.5rem;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(249,115,22,0.12), 0 0 80px rgba(249,115,22,0.12);
+    }
+    .thanks-overlay.is-open .thanks-panel {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ✅ WHATSAPP: HOVER VERDE (SOLUÇÃO DIRETA) */
+    .whats-btn:hover {
+      background: rgb(37, 211, 100) !important; /* verde WhatsApp */
+      border-color: rgb(37, 211, 100) !important;
+    }
+    .whats-btn:hover i {
+      color: #25D366 !important;
+    }
+  </style>
+</head>
+
+<body class="text-slate-300 antialiased overflow-x-hidden">
+
+  <nav class="fixed top-0 left-0 w-full z-50 bg-white/5 backdrop-blur-2xl border-b border-white/10 py-4">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <img src="img/logoflarr.png" alt="Logo Flarr" class="h-10 w-auto">
+      <div class="hidden lg:flex space-x-8 text-xs font-bold uppercase tracking-widest">
+        <a href="#problema" class="hover:text-flarr-orange transition">O Desafio</a>
+        <a href="#funcionalidades" class="hover:text-flarr-orange transition">Funcionalidades</a>
+        <a href="#casos" class="hover:text-flarr-orange transition">Casos de Uso</a>
+        <a href="#diferenciais" class="hover:text-flarr-orange transition">Por que nós?</a>
+      </div>
+      <a href="#contato" class="gradient-orange hover:scale-105 text-white px-6 py-2 rounded-full font-bold transition-all shadow-lg shadow-orange-500/20 text-sm">AGENDAR DEMO</a>
+    </div>
+  </nav>
+
+  <header class="relative pt-40 pb-20 px-6 overflow-hidden">
+    <div class="spotlight top-[-10%] left-[-10%]"></div>
+    <div class="container mx-auto text-center max-w-5xl">
+      <div class="reveal in-view">
+        <span class="inline-block border border-flarr-orange/30 text-flarr-orange px-4 py-1 rounded-full text-xs font-bold mb-6 italic uppercase tracking-widest">
+          CURADORIA E ATIVAÇÃO SOCIAL EM TEMPO REAL PARA O AO VIVO
+        </span>
+        <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 leading-tight">
+          Social em tempo real. <span class="text-flarr-orange">Pronto para ir ao ar.</span>
+        </h1>
+        <p class="text-xl text-slate-400 mb-10 max-w-3xl mx-auto leading-relaxed">
+          Não exiba prints improvisados. Capture, modere e exiba tweets ao vivo com estética de broadcast, controle editorial e potencial de monetização para TV, streaming, esporte e eventos.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20">
+          <a href="#contato" class="gradient-orange text-white px-10 py-5 rounded-2xl font-bold text-lg hover:shadow-2xl transition shadow-orange-500/30 flex items-center justify-center">
+            Solicitar Demo <i data-lucide="zap" class="ml-2 w-5 h-5 fill-current"></i>
+          </a>
+          <a href="#funcionalidades" class="glass-card px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white/5 transition flex items-center justify-center">
+            Ver Recursos
+          </a>
+        </div>
+      </div>
+
+      <div class="relative max-w-5xl mx-auto reveal" data-delay="80">
+        <div class="monitor-frame overflow-hidden">
+          <img loading="lazy" decoding="async"
+               src="img/painel-flarr.png"
+               alt="Painel Flarr" class="w-full h-auto">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="problema" class="py-24 bg-[#080808]">
+    <div class="container mx-auto px-6">
+      <div class="text-center mb-16 reveal">
+        <h2 class="text-4xl font-bold text-white mb-4">O risco de improvisar é alto demais.</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto text-lg">
+          Se você opera ao vivo, sabe: “dar print” ou abrir o site no ar não é seguro. Além do risco editorial, o improviso também elimina oportunidades de ativação de marca e receita em tempo real.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass-card p-8 rounded-2xl border-l-4 border-l-red-500/50 reveal" data-delay="0">
+          <i data-lucide="shield-off" class="text-red-500 mb-4"></i>
+          <h3 class="text-xl font-bold text-white mb-3">Risco Editorial</h3>
+          <p class="text-sm leading-relaxed text-slate-400">
+            Sem curadoria, você corre o risco de exibir ofensas, links suspeitos ou conteúdo impróprio ao vivo — quando errar não é uma possibilidade.
+          </p>
+        </div>
+
+        <div class="glass-card p-8 rounded-2xl border-l-4 border-l-orange-500/50 reveal" data-delay="80">
+          <i data-lucide="layout" class="text-orange-500 mb-4"></i>
+          <h3 class="text-xl font-bold text-white mb-3">Visual Amador</h3>
+          <p class="text-sm leading-relaxed text-slate-400">
+            Prints quebram a identidade visual e não conversam com seu pacote gráfico (GC), passando amadorismo para a audiência e para o patrocinador.
+          </p>
+        </div>
+
+        <div class="glass-card p-8 rounded-2xl border-l-4 border-l-yellow-500/50 reveal" data-delay="160">
+          <i data-lucide="timer" class="text-yellow-500 mb-4"></i>
+          <h3 class="text-xl font-bold text-white mb-3">Perda de Ritmo</h3>
+          <p class="text-sm leading-relaxed text-slate-400">
+            Buscar o “tweet perfeito” no meio da transmissão é inviável. Sem fila, aprovação e organização, a interação vira atraso — e o ao vivo não perdoa.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="funcionalidades" class="py-24 relative">
+    <div class="spotlight bottom-0 right-0"></div>
+    <div class="container mx-auto px-6 text-center mb-16">
+      <h2 class="text-4xl font-bold text-white mb-4 reveal">Feito para quem opera sob pressão.</h2>
+      <p class="text-slate-400 reveal" data-delay="80">Cada recurso do Flarr foi desenhado para ambientes críticos, onde errar não é uma opção.</p>
+    </div>
+
+    <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid sm:grid-cols-2 gap-6 reveal fade-right">
+        <div class="p-6">
+          <i data-lucide="hash" class="text-flarr-orange mb-4"></i>
+          <h4 class="text-white font-bold mb-2">Multicaptura</h4>
+          <p class="text-sm text-slate-400">Capture por hashtags, menções e palavras-chave em uma interface unificada.</p>
+        </div>
+        <div class="p-6">
+          <i data-lucide="check-square" class="text-flarr-orange mb-4"></i>
+          <h4 class="text-white font-bold mb-2">Fila de Aprovação</h4>
+          <p class="text-sm text-slate-400">Fluxo de “Aprovados”, “Favoritos” e “Rejeitados” para curadoria rápida e segura.</p>
+        </div>
+        <div class="p-6">
+          <i data-lucide="tv" class="text-flarr-orange mb-4"></i>
+          <h4 class="text-white font-bold mb-2">Saída Limpa (On-Air)</h4>
+          <p class="text-sm text-slate-400">Output pronto para exibição: ideal para Chroma Key e vMix/OBS.</p>
+        </div>
+        <div class="p-6">
+          <i data-lucide="users" class="text-flarr-orange mb-4"></i>
+          <h4 class="text-white font-bold mb-2">Multiusuários</h4>
+          <p class="text-sm text-slate-400">Produtor modera e direção escolhe o que vai ao ar — no ritmo do ao vivo.</p>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-3xl reveal fade-left">
+        <div class="bg-black/40 aspect-video rounded-2xl flex items-center justify-center italic text-slate-500">
+          <img loading="lazy" decoding="async"
+               src="img/fluxo-flarr.png"
+               alt="Fluxo de funcionamento do Flarr"
+               class="w-full h-auto rounded-2xl">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="casos" class="py-24 bg-gradient-to-b from-[#050505] to-[#0a0a0a]">
+    <div class="container mx-auto px-6 text-center mb-16">
+      <h2 class="text-3xl font-bold text-white mb-4 reveal">Uma plataforma. Múltiplos cenários de ativação ao vivo.</h2>
+      <p class="text-slate-400 reveal" data-delay="80">Clique em <span class="text-white font-semibold">Saiba Mais</span> e veja o Flarr aplicado ao seu cenário.</p>
+    </div>
+
+    <div class="container mx-auto px-6 grid md:grid-cols-3 gap-6">
+      <div class="group relative glass-card p-8 rounded-3xl hover:border-flarr-orange/50 transition-all duration-500 reveal">
+        <h4 class="text-xl font-bold text-white mb-4">TV & Jornalismo</h4>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          Leve a opinião do público para o ar com controle editorial, estética profissional e quadros interativos patrocináveis.
+        </p>
+        <button onclick="openModal('modal-tv')" class="text-flarr-orange text-xs font-bold flex items-center group-hover:gap-2 transition-all italic uppercase">
+          SAIBA MAIS <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="group relative glass-card p-8 rounded-3xl hover:border-flarr-orange/50 transition-all duration-500 reveal" data-delay="100">
+        <h4 class="text-xl font-bold text-white mb-4">Eventos & Estádios</h4>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          Ative marcas no telão com hashtags patrocinadas, destaque torcedores e transforme o social em experiência ao vivo.
+        </p>
+        <button onclick="openModal('modal-eventos')" class="text-flarr-orange text-xs font-bold flex items-center group-hover:gap-2 transition-all italic uppercase">
+          SAIBA MAIS <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="group relative glass-card p-8 rounded-3xl hover:border-flarr-orange/50 transition-all duration-500 reveal" data-delay="200">
+        <h4 class="text-xl font-bold text-white mb-4">Streaming & Lives</h4>
+        <p class="text-slate-400 text-sm leading-relaxed mb-6">
+          Traga a conversa do X para a live e leve a live para o X — com curadoria, ritmo e espaço para ativações comerciais.
+        </p>
+        <button onclick="openModal('modal-streaming')" class="text-flarr-orange text-xs font-bold flex items-center group-hover:gap-2 transition-all italic uppercase">
+          SAIBA MAIS <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAIS -->
+  <div id="modal-tv" class="modal-overlay">
+    <div class="modal-panel glass-card p-8 md:p-12 relative">
+      <button onclick="closeModal('modal-tv')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+        <i data-lucide="x-circle" class="w-8 h-8"></i>
+      </button>
+      <span class="text-flarr-orange font-bold text-xs uppercase mb-4 block">TV & JORNALISMO</span>
+      <h3 class="text-3xl font-extrabold text-white mb-6">Interação social com controle editorial para o ao vivo</h3>
+      <div class="space-y-4 text-slate-300 text-sm mb-8">
+        <p>
+          O Flarr foi criado para ambientes onde <span class="text-white font-semibold">qualquer erro vai ao ar</span>.
+          Em telejornais, programas de entretenimento e transmissões esportivas, o público quer participar — e a produção precisa de controle total.
+        </p>
+        <ul class="space-y-2 border-l border-flarr-orange/30 pl-4">
+          <li>• Capturar tweets por hashtag, palavra-chave ou perfil</li>
+          <li>• Moderar todo o conteúdo antes da exibição</li>
+          <li>• Criar filas (Aprovados / Favoritos / Lixeira) para manter o ritmo</li>
+          <li>• Integrar com GC, vMix, OBS ou fluxos de estúdio</li>
+          <li>• Transformar participação do público em ações patrocináveis</li>
+        </ul>
+        <p class="font-bold text-white">
+          Exemplos práticos: “Tweet do Dia”, enquetes ao vivo, hashtags patrocinadas em realities e quadros interativos em transmissões esportivas.
+        </p>
+      </div>
+      <p class="text-white font-bold italic mb-8">O público participa. A produção continua no controle.</p>
+      <button onclick="closeModal('modal-tv')" class="w-full bg-flarr-orange text-white font-bold py-4 rounded-xl uppercase">Fechar</button>
+    </div>
+  </div>
+
+  <div id="modal-eventos" class="modal-overlay">
+    <div class="modal-panel glass-card p-8 md:p-12 relative">
+      <button onclick="closeModal('modal-eventos')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+        <i data-lucide="x-circle" class="w-8 h-8"></i>
+      </button>
+      <span class="text-flarr-orange font-bold text-xs uppercase mb-4 block">EVENTOS, SHOWS & ESTÁDIOS</span>
+      <h3 class="text-3xl font-extrabold text-white mb-6">Do tweet para o telão: engajamento que vira experiência ao vivo</h3>
+      <div class="space-y-4 text-slate-300 text-sm mb-8">
+        <p>
+          Com o Flarr, telões de LED viram social walls com <span class="text-white font-semibold">curadoria profissional</span> e oportunidades claras de ativação de marca.
+        </p>
+        <ul class="space-y-2 border-l border-flarr-orange/30 pl-4">
+          <li>• Hashtags oficiais do evento/jogo e campanhas temáticas</li>
+          <li>• Hashtags patrocinadas (ex: <span class="text-white font-semibold">#BrahmaNoJogo</span>, <span class="text-white font-semibold">#BrahmaNaTorcida</span>)</li>
+          <li>• Tweets exibidos no telão com nome e foto do participante</li>
+          <li>• Curadoria para evitar conteúdo inadequado e proteger a marca</li>
+          <li>• Métricas claras de engajamento para patrocinadores</li>
+        </ul>
+        <p class="font-bold text-white">
+          Exemplos práticos: torcedores vendo seus tweets no telão, shows com participação do público e ativações em tempo real.
+        </p>
+      </div>
+      <p class="text-white font-bold italic mb-8">O público deixa de assistir e passa a fazer parte do evento.</p>
+      <button onclick="closeModal('modal-eventos')" class="w-full bg-flarr-orange text-white font-bold py-4 rounded-xl uppercase">Fechar</button>
+    </div>
+  </div>
+
+  <div id="modal-streaming" class="modal-overlay">
+    <div class="modal-panel glass-card p-8 md:p-12 relative">
+      <button onclick="closeModal('modal-streaming')" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+        <i data-lucide="x-circle" class="w-8 h-8"></i>
+      </button>
+      <span class="text-flarr-orange font-bold text-xs uppercase mb-4 block">STREAMING & LIVES</span>
+      <h3 class="text-3xl font-extrabold text-white mb-6">Leve a conversa do X para a live — e a live para o X</h3>
+      <div class="space-y-4 text-slate-300 text-sm mb-8">
+        <p>Engajamento desorganizado vira ruído. O Flarr organiza a conversa e transforma participação em valor real.</p>
+        <ul class="space-y-2 border-l border-flarr-orange/30 pl-4">
+          <li>• Centralizar comentários relevantes do X e filtrar o que importa</li>
+          <li>• Destacar tweets ao vivo com estética profissional</li>
+          <li>• Incentivar hashtags oficiais e participação do público</li>
+          <li>• Criar quadros interativos fixos (perguntas, desafios, “tweet do bloco”)</li>
+          <li>• Abrir espaço para ações comerciais e patrocinadas com segurança</li>
+        </ul>
+        <p class="font-bold text-white">Exemplos práticos: lives esportivas, programas digitais e quadros interativos com hashtags oficiais.</p>
+      </div>
+      <p class="text-white font-bold italic mb-8">Engajamento não é volume. É curadoria, ritmo e participação real.</p>
+      <button onclick="closeModal('modal-streaming')" class="w-full bg-flarr-orange text-white font-bold py-4 rounded-xl uppercase">Fechar</button>
+    </div>
+  </div>
+
+  <section id="diferenciais" class="py-24">
+    <div class="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+      <div class="reveal fade-right">
+        <h2 class="text-4xl font-extrabold text-white mb-8">Por que o Flarr é a escolha dos profissionais?</h2>
+        <div class="space-y-6">
+          <div class="flex items-center gap-4"><i data-lucide="check" class="text-flarr-orange"></i> <p class="text-slate-300 font-medium">Configuração em menos de 2 minutos.</p></div>
+          <div class="flex items-center gap-4"><i data-lucide="check" class="text-flarr-orange"></i> <p class="text-slate-300 font-medium">Não requer conhecimentos técnicos de API.</p></div>
+          <div class="flex items-center gap-4"><i data-lucide="check" class="text-flarr-orange"></i> <p class="text-slate-300 font-medium">Pensado para ativações patrocinadas e monetização.</p></div>
+          <div class="flex items-center gap-4"><i data-lucide="check" class="text-flarr-orange"></i> <p class="text-slate-300 font-medium">Suporte prioritário para eventos ao vivo.</p></div>
+        </div>
+      </div>
+
+      <div class="glass-card p-12 rounded-[3rem] text-center reveal fade-left">
+        <p class="text-5xl font-black text-white mb-2">99.9%</p>
+        <p class="text-flarr-orange font-bold uppercase text-sm mb-6 tracking-widest">Uptime de Coleta</p>
+        <p class="text-slate-400">Projetado para operar em momentos críticos sem perder o timing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="py-24 relative overflow-hidden px-6">
+    <div class="container mx-auto max-w-4xl glass-card p-12 rounded-[3rem] reveal">
+      <div class="text-center mb-10">
+        <h2 class="text-4xl font-bold text-white mb-3">Leve o Flarr para o seu próximo ao vivo</h2>
+        <p class="text-slate-400 italic">Preencha o formulário para agendar sua demo.</p>
+      </div>
+
+      <!-- ✅ Botão WhatsApp (alternativa direta) -->
+      <div class="mb-8">
+        <a id="whatsCta"
+           href="#"
+           class="whats-btn glass-card text-white font-black py-4 rounded-2xl transition hover:scale-[1.01] border border-white/10 w-full flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          FALAR NO WHATSAPP
+        </a>
+      </div>
+
+      <!-- ✅ Form sem action (envio via fetch para FormSubmit) -->
+      <form id="contactForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_subject" value="[Lead Flarr] Pedido de Demo / Contato">
+
+        <!-- Honeypot -->
+        <div class="hidden">
+          <label>Não preencha este campo</label>
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Nome Completo</label>
+          <input type="text" name="Nome" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">E-mail Corporativo</label>
+          <input type="email" name="Email" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Empresa</label>
+          <input type="text" name="Empresa" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Cargo / Função</label>
+          <input type="text" name="Cargo" placeholder="Ex: Produtor, Diretor, Marketing, Comercial"
+                 class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition placeholder:text-slate-600">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">WhatsApp</label>
+          <input type="tel" name="WhatsApp" placeholder="(21) 99999-9999"
+                 class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition placeholder:text-slate-600">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Segmento</label>
+          <select id="segmentSelect" name="Segmento" required
+                  class="w-full bg-[#1a1a1e] border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
+            <option value="" selected disabled>Selecione uma opção</option>
+            <option>Emissora de TV / Jornalismo</option>
+            <option>Canal Digital / Streaming (YouTube)</option>
+            <option>Produtora / Direção de Transmissão (vMix/OBS/GC)</option>
+            <option>Evento / Show / Festival</option>
+            <option>Clube / Arena / Estádio</option>
+            <option>Agência (Brand Experience / Ativações)</option>
+            <option>Influenciador / Criador (Lives)</option>
+            <option value="Outro">Outro (qual?)</option>
+          </select>
+        </div>
+
+        <div id="segmentOtherWrap" class="hidden md:col-span-2">
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Qual segmento?</label>
+          <input type="text" id="segmentOtherInput" name="Segmento (Outro)"
+                 class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
+        </div>
+
+        <div class="col-span-1 md:col-span-2">
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Mensagem</label>
+          <textarea name="Mensagem" rows="5"
+                    class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition"></textarea>
+        </div>
+
+        <button id="submitBtn" type="submit"
+                class="col-span-1 md:col-span-2 gradient-orange text-white font-black py-5 rounded-2xl transition hover:scale-[1.01] shadow-xl shadow-orange-500/20">
+          SOLICITAR DEMO
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="py-12 border-t border-white/5 text-center">
+    <img src="img/logoflarr.png" alt="Logo Flarr" class="h-12 w-auto mx-auto mb-4">
+    <p class="text-xs text-slate-600 font-bold uppercase tracking-[0.3em]">Built for real-time social on-air</p>
+  </footer>
+
+  <!-- ✅ POPUP -->
+  <div id="thanksOverlay" class="thanks-overlay">
+    <div class="thanks-panel glass-card p-8 md:p-10 relative">
+      <button id="thanksCloseX" class="absolute top-6 right-6 text-slate-500 hover:text-white transition">
+        <i data-lucide="x-circle" class="w-8 h-8"></i>
+      </button>
+
+      <span class="text-flarr-orange font-bold text-xs uppercase mb-4 block">FORMULÁRIO ENVIADO</span>
+      <h3 class="text-3xl font-extrabold text-white mb-4">Obrigado!</h3>
+      <p class="text-slate-300 text-sm mb-8">
+        Recebemos sua solicitação. Em breve, entraremos em contato.
+      </p>
+
+      <button id="thanksCloseBtn" class="w-full bg-flarr-orange text-white font-bold py-4 rounded-xl uppercase">
+        Fechar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Lucide
+    document.addEventListener('DOMContentLoaded', () => {
+      try { lucide.createIcons(); } catch(e) {}
+    });
+
+    // ===== SCROLL REVEAL =====
+    (function initScrollReveal(){
+      const els = document.querySelectorAll('.reveal:not(.in-view)');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(el => el.classList.add('in-view'));
+        return;
+      }
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const delay = parseInt(el.getAttribute('data-delay') || '0', 10);
+            if (delay > 0) el.style.transitionDelay = delay + 'ms';
+            el.classList.add('in-view');
+            io.unobserve(el);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+
+      els.forEach(el => io.observe(el));
+    })();
+
+    // ===== MODAIS =====
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      document.querySelectorAll('.modal-overlay.is-open').forEach(m => m.classList.remove('is-open'));
+      document.body.classList.add('modal-open');
+      modal.classList.add('is-open');
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      setTimeout(() => {
+        const anyOpen = document.querySelector('.modal-overlay.is-open');
+        if (!anyOpen) document.body.classList.remove('modal-open');
+      }, 230);
+    }
+
+    window.addEventListener('click', (event) => {
+      const overlay = event.target.closest('.modal-overlay');
+      if (overlay && event.target === overlay) closeModal(overlay.id);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.is-open').forEach(m => closeModal(m.id));
+      }
+    });
+
+    // Segmento: Outro
+    (function initSegmentOther(){
+      const sel = document.getElementById('segmentSelect');
+      const wrap = document.getElementById('segmentOtherWrap');
+      const input = document.getElementById('segmentOtherInput');
+      if (!sel || !wrap || !input) return;
+
+      function sync(){
+        const isOther = sel.value === 'Outro';
+        wrap.classList.toggle('hidden', !isOther);
+        input.required = isOther;
+        if (!isOther) input.value = '';
+      }
+
+      sel.addEventListener('change', sync);
+      sync();
+    })();
+
+    // ===== WHATSAPP =====
+    // ✅ TROQUE PELO SEU NÚMERO REAL (formato: 55 + DDD + número, sem espaços)
+    const WHATSAPP_NUMBER = "5521982726610";
+    const WHATSAPP_MESSAGE = "Olá! Quero falar com a equipe Flarr e agendar uma demo.";
+
+    function buildWhatsAppLink(){
+      const text = encodeURIComponent(WHATSAPP_MESSAGE);
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+    }
+
+    (function initWhatsApp(){
+      const btn = document.getElementById('whatsCta');
+      if (!btn) return;
+      btn.href = buildWhatsAppLink();
+      btn.target = "_blank";
+      btn.rel = "noopener";
+    })();
+
+    // ===== POPUP THANKS =====
+    const FORM_ENDPOINT = "https://formsubmit.co/ajax/contato@flarr.com.br";
+
+    function openThanks(){
+      const overlay = document.getElementById('thanksOverlay');
+      if (!overlay) return;
+      overlay.classList.add('is-open');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeThanks(){
+      const overlay = document.getElementById('thanksOverlay');
+      if (!overlay) return;
+      overlay.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    (function initThanksPopup(){
+      const overlay = document.getElementById('thanksOverlay');
+      const btn = document.getElementById('thanksCloseBtn');
+      const x = document.getElementById('thanksCloseX');
+      if (!overlay) return;
+
+      btn && btn.addEventListener('click', closeThanks);
+      x && x.addEventListener('click', closeThanks);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeThanks();
+      });
+    })();
+
+    // ===== ENVIO VIA FETCH =====
+    (function initFormSubmit(){
+      const form = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const honey = form.querySelector('input[name="_honey"]');
+        if (honey && honey.value.trim().length > 0) return;
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "ENVIANDO...";
+        }
+
+        try {
+          const fd = new FormData(form);
+
+          const res = await fetch(FORM_ENDPOINT, {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: fd
+          });
+
+          if (!res.ok) throw new Error("Falha no envio");
+
+          form.reset();
+
+          // reseta "Outro"
+          const sel = document.getElementById('segmentSelect');
+          const wrap = document.getElementById('segmentOtherWrap');
+          const input = document.getElementById('segmentOtherInput');
+          if (sel && wrap && input) {
+            wrap.classList.add('hidden');
+            input.required = false;
+            input.value = '';
+          }
+
+          openThanks();
+        } catch (err) {
+          alert("Não foi possível enviar agora. Tente novamente em instantes.");
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "SOLICITAR DEMO";
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
