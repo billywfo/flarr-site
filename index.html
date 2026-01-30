@@ -513,12 +513,34 @@
         </div>
       </div>
 
-      <div class="glass-card p-12 rounded-[3rem] text-center reveal fade-left">
-        <p class="text-5xl font-black text-white mb-2">99.9%</p>
-        <p class="text-flarr-orange font-bold uppercase text-sm mb-6 tracking-widest">Uptime de Coleta</p>
-        <p class="text-slate-400">Projetado para operar em momentos críticos sem perder o timing.</p>
-      </div>
-    </div>
+      <div class="space-y-6 reveal fade-left">
+  <!-- Card existente: Uptime -->
+  <div class="glass-card p-12 rounded-[3rem] text-center">
+    <p class="text-5xl font-black text-white mb-2">99.9%</p>
+    <p class="text-flarr-orange font-bold uppercase text-sm mb-6 tracking-widest">Uptime de Coleta</p>
+    <p class="text-slate-400">Projetado para operar em momentos críticos sem perder o timing.</p>
+  </div>
+
+  <!-- NOVO card: Operação real (com animação) -->
+  <div class="glass-card p-10 rounded-[3rem] text-center">
+    <p class="text-xs text-slate-500 font-bold uppercase tracking-[0.3em] mb-3">
+      Operação real em emissora nacional
+    </p>
+
+    <p class="text-5xl font-black text-white mb-2">
+      <span id="hoursCount" data-count-up data-target="700">0</span>+
+    </p>
+
+    <p class="text-flarr-orange font-bold uppercase text-sm mb-4 tracking-widest">
+      horas no ar
+    </p>
+
+    <p class="text-slate-400">
+      Evidência de uso contínuo em ambiente real de broadcast.
+    </p>
+  </div>
+</div>
+
   </section>
 
   <section id="contato" class="py-24 relative overflow-hidden px-6">
@@ -555,7 +577,7 @@
         </div>
 
         <div>
-          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">E-mail Corporativo</label>
+          <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">E-mail</label>
           <input type="email" name="Email" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
         </div>
 
@@ -566,13 +588,12 @@
 
         <div>
           <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">Cargo / Função</label>
-          <input type="text" name="Cargo" placeholder="Ex: Produtor, Diretor, Marketing, Comercial"
-                 class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition placeholder:text-slate-600">
+          <input type="text" name="Cargo / Função" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition">
         </div>
 
         <div>
           <label class="text-xs font-bold uppercase text-slate-500 mb-2 block tracking-widest">WhatsApp</label>
-          <input type="tel" name="WhatsApp" placeholder="(21) 99999-9999"
+          <input type="tel" name="WhatsApp" placeholder="(xx) xxxxx-xxxx"
                  class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-flarr-orange outline-none transition placeholder:text-slate-600">
         </div>
 
@@ -814,6 +835,62 @@
         }
       });
     })();
+    
+
+  // ===== CONTADOR (700+ horas) =====
+  (function initCountUp(){
+    const el = document.querySelector('[data-count-up]');
+    if (!el) return;
+
+    const target = parseInt(el.getAttribute('data-target') || '0', 10);
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setFinal(){
+      el.textContent = String(target);
+    }
+
+    function animate(){
+      if (el.dataset.done === '1') return;
+      el.dataset.done = '1';
+
+      if (prefersReduced) {
+        setFinal();
+        return;
+      }
+
+      const duration = 900; // ms (curto e “enterprise”, sem firula)
+      const start = performance.now();
+      const from = 0;
+
+      function tick(now){
+        const t = Math.min(1, (now - start) / duration);
+        // easing suave (não “contagem de marketing”)
+        const eased = 1 - Math.pow(1 - t, 3);
+        const value = Math.round(from + (target - from) * eased);
+        el.textContent = String(value);
+
+        if (t < 1) requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      animate();
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animate();
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.35 });
+
+    io.observe(el);
+  })();
   </script>
 </body>
 </html>
