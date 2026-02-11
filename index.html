@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Favicon -->
+  <link rel="icon" href="img/favicon.ico">
+
   <!-- ✅ SEO (FINAL) -->
   <title>Flarr — Do X para o ar. Do ar para o X.</title>
   <meta name="description" content="Capture, modere e exiba tweets ao vivo com estética de broadcast e controle editorial. Curadoria em tempo real para TV, streaming, esportes e eventos — com potencial de ativação e monetização.">
@@ -39,6 +42,50 @@
   </script>
 
   <style>
+    .orange-glow-badge{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  padding: 6px 16px;
+  border-radius: 9999px;
+
+  font-size: clamp(11px, 0.9vw, 13px);
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+
+  color: #f97316;
+
+  /* base do pill */
+  background: rgba(249, 115, 22, 0.06);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+
+  /* IMPORTANTÍSSIMO: impede “vazar” */
+  overflow: hidden;
+
+  /* brilho leve e uniforme (sem degradê nas pontas) */
+  box-shadow:
+    inset 0 0 0 1px rgba(249,115,22,0.10),
+    inset 0 0 18px rgba(249,115,22,0.14),
+    0 0 16px rgba(249,115,22,0.10);
+}
+
+/* camada de glow interno uniforme */
+.orange-glow-badge::before{
+  content: "";
+  position: absolute;
+  inset: 0;                 /* NÃO expande pra fora */
+  border-radius: inherit;
+  pointer-events: none;
+
+  /* brilho interno suave e constante */
+  box-shadow:
+    inset 0 0 28px rgba(249,115,22,0.18);
+  opacity: .9;
+}
+
+
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050505; }
     .text-flarr-orange { color: #f97316; }
     .bg-flarr-orange { background-color: #f97316; }
@@ -190,9 +237,10 @@
     <div class="spotlight top-[-10%] left-[-10%]"></div>
     <div class="container mx-auto text-center max-w-5xl">
       <div class="reveal in-view">
-        <span class="inline-block border border-flarr-orange/30 text-flarr-orange px-4 py-1 rounded-full text-xs font-bold mb-6 italic uppercase tracking-widest">
+        <span class="orange-glow-badge mb-6">
           CURADORIA E ATIVAÇÃO SOCIAL EM TEMPO REAL PARA O AO VIVO
         </span>
+
         <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-6 leading-tight">
           Social em tempo real. <span class="text-flarr-orange">Pronto para ir ao ar.</span>
         </h1>
@@ -373,7 +421,7 @@
           A camada visual permanece totalmente sob controle do cliente.
         </p>
         <p class="text-slate-200/80 text-sm">
-          O Flarr entrega os dados estruturados (XML). A arte e o pacote gráfico ficam 100% do seu lado.
+          O Flarr entrega os dados estruturados . A arte e o pacote gráfico ficam 100% do seu lado.
         </p>
       </div>
 
